@@ -5,6 +5,18 @@ import (
 	"fmt"
 )
 
+func calcMedia(notas []float32) float32 {
+	if len(notas) == 0 {
+		return 0
+	}
+	var nota float32
+	for _, n := range notas {
+		nota += n
+	}
+
+	return nota / float32(len(notas))
+}
+
 type GreetingBodyRequest struct {
 	// armazenar o nome dentro da URL
 	// é oq o usuario manda para o servidor
@@ -31,9 +43,9 @@ func GreetingEndpoint(ctx context.Context, input *GreetingBodyRequest) (*Greetin
 }
 
 type AlunoRequest struct {
-	Body struct{
+	Body struct {
 		Nome  string    `json:"nome" example:"Bruno" doc:"Pegar o nome do Aluno dentro do JSON /aluno"`
-		Notas []float64 `json:"notas" example:"[9.5, 4.5]" doc:"Pegar as notas do Aluno dentro do JSON /aluno"`
+		Notas []float32 `json:"notas" example:"[9.5, 4.5]" doc:"Pegar as notas do Aluno dentro do JSON /aluno"`
 	}
 }
 
@@ -49,17 +61,8 @@ func AlunoEndpoint(ctx context.Context, input *AlunoRequest) (*AlunoReponse, err
 	fmt.Printf("INPUT: %+v\n", input)
 	res := &AlunoReponse{}
 	nome := input.Body.Nome
-	media := func(notas []float64) float64 {
-		if len(input.Body.Notas) == 0 {
-			return 0
-		}
-
-		var nota float64
-		for _, n := range notas {
-			nota += n
-		}
-		return nota / float64(len(notas))
-	}(input.Body.Notas)
+	// dentro do parametro, ele so vai criar a var temporaria dentro da funcao
+	media := calcMedia(input.Body.Notas)
 
 	res.Body.Media = float32(media)
 
@@ -70,6 +73,41 @@ func AlunoEndpoint(ctx context.Context, input *AlunoRequest) (*AlunoReponse, err
 	}
 
 	res.Body.Message = fmt.Sprintf("Olá, %v. Aqui está as suas notas: %v \n Sua média final é: %.2f \n você está %s", nome, input.Body.Notas, media, res.Body.Status)
+
+	return res, nil
+}
+
+type AlunoIdRequest struct {
+	Id string `path:"id" example:"5" doc:"Id do Aluno"`
+
+	Body struct {
+		Name  string    `json:"nome" example:"Bruno" doc:"Pega o nome do Aluno dentro JSON"`
+		Notas []float32 `json:"notas" example:"[9.5, 4.5]" doc:"Pegar as notas do Aluno dentro do JSON /aluno"`
+	}
+}
+
+type AlunoIdResponse struct {
+	Body struct {
+		Message string  `json:"message" example:"Aqui está suas notas Bruno: " doc:"Pegar uma mensagem para retornar informações para o Aluno /aluno"`
+		Media   float32 `json:"media" example:"10" doc:"Pegar a media do Aluno dentro do JSON"`
+		Status  string  `json:"status" example:"Aprovado" doc:"Retornar se o Aluno foi aprovado ou não"`
+	}
+}
+
+func AlunoIdEndpoint(ctx context.Context, input *AlunoIdRequest) (*AlunoIdResponse, error) {
+	res := &AlunoIdResponse{}
+
+	media := calcMedia(input.Body.Notas)
+
+	res.Body.Media = float32(media)
+
+	if media >= 7 {
+		res.Body.Status = "Aprovado"
+	} else {
+		res.Body.Status = "Reprovado"
+	}
+
+	res.Body.Message = fmt.Sprintf("Aluno ID: %s atualizado: %s | Notas: %v | Média: %.2f | Status: %s", input.Id, input.Body.Name, input.Body.Notas, media, res.Body.Status)
 
 	return res, nil
 }

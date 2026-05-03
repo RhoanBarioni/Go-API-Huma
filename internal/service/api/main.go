@@ -26,7 +26,7 @@ func main() {
 	// Register GET /greeting/{name} handler.
 	huma.Get(api, "/greeting/{name}", serviceapi.GreetingEndpoint)
 	huma.Post(api, "/aluno", serviceapi.AlunoEndpoint)
-	// huma.Put(api, "/aluno/{id}", func)
+	huma.Put(api, "/aluno/{id}", serviceapi.AlunoIdEndpoint)
 
 	// Start the server!
 	http.ListenAndServe("127.0.0.1:8888", router)
