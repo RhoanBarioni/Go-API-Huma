@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	serviceapi "github.com/RhoanBarioni/Go-API-Huma/service"
+	"github.com/RhoanBarioni/Go-API-Huma/internal/handlers"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/go-chi/chi/v5"
@@ -24,9 +24,15 @@ func main() {
 	api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0")) // humachi.new vai unir junto com o chi para que funcione junto com o swagger
 
 	// Register GET /greeting/{name} handler.
-	huma.Get(api, "/greeting/{name}", serviceapi.GreetingEndpoint)
-	huma.Post(api, "/aluno", serviceapi.AlunoEndpoint)
-	huma.Put(api, "/aluno/{id}", serviceapi.AlunoIdEndpoint)
+	// huma.Get(api, "/greeting/{name}", handlers.GreetingEndpoint)
+	// GET /alunos
+	huma.Get(api, "/alunos", handlers.GetAlunos)
+	// GET /aluno/{id}
+	huma.Get(api, "/aluno/{id}", handlers.GetAlunosId)
+	huma.Post(api, "/aluno", handlers.CreateAluno)
+	huma.Put(api, "/aluno/{id}", handlers.UpdateAluno)
+	// DELETE /aluno/{id}
+	huma.Delete(api, "/aluno/{id}", handlers.DeleteAlunoId)
 
 	// Start the server!
 	http.ListenAndServe("127.0.0.1:8888", router)
