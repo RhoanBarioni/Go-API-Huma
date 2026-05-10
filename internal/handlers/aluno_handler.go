@@ -17,6 +17,23 @@ func GetAlunos(ctx context.Context, input *contracts.GetAlunosResquest) (*contra
 	return res, nil
 }
 
+// func GetAlunosDB(db *sql.DB) func(context.Context, *contracts.GetAlunosRequest) (*contracts.GetAlunosResponse, error) {
+// 	return func(ctx context.Context, input *contracts.GetAlunosRequest) (*contracts.GetAlunosResponse, error) {
+// 		alunos, err := repository.GetAlunosDB(ctx, db)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		res := &contracts.GetAlunosResponse{}
+// 		res.Body.Alunos = alunos
+// 		if input.Nome != "" {
+// 			res.Body.Message = fmt.Sprintf("Resultado para a busca %s", input.Nome)
+// 		} else {
+// 			res.Body.Message = "Listagem completa de alunos"
+// 		}
+// 		return res, nil
+// 	}
+// }
+
 func GetAlunosId(ctx context.Context, input *contracts.GetAlunosIdResquest) (*contracts.GetAlunosIdResponse, error) {
 
 	res := &contracts.GetAlunosIdResponse{}

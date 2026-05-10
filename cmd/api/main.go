@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/RhoanBarioni/Go-API-Huma/internal/database"
 	"github.com/RhoanBarioni/Go-API-Huma/internal/handlers"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
@@ -17,8 +18,19 @@ type GreetingOutput struct {
 		Message string `json:"message" example:"hello, world!" doc:"Greeting message"`
 	}
 }
-// testandfo se a i.a vai me retornar o git commit certo
+
 func main() {
+	db, err := database.Db()
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	// aluno2 := models.Aluno{
+	// 	Id: 8,
+	// 	Nome: "silvn",
+	// 	Sobrenome: "do grau",
+	// 	Media: 4,
+	// }
 	// Create a new router & API
 	router := chi.NewMux()                                            // pega as rotas
 	api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0")) // humachi.new vai unir junto com o chi para que funcione junto com o swagger
