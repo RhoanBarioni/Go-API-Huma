@@ -17,7 +17,7 @@ type GreetingOutput struct {
 		Message string `json:"message" example:"hello, world!" doc:"Greeting message"`
 	}
 }
-
+// testandfo se a i.a vai me retornar o git commit certo
 func main() {
 	// Create a new router & API
 	router := chi.NewMux()                                            // pega as rotas
