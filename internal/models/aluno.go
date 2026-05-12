@@ -1,7 +1,7 @@
 package models
 
 type Aluno struct{
-	Id int
+	Id string
 	Nome string
 	Sobrenome string
 	Media float64

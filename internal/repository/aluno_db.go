@@ -24,7 +24,7 @@ func GetAlunosDB(ctx context.Context, db *sql.DB) ([]models.Aluno, error) {
 	return alunos, nil
 }
 
-func GetAlunoIDNameDB(ctx context.Context, db *sql.DB, id int) (models.Aluno, error) {
+func GetAlunoIDNameDB(ctx context.Context, db *sql.DB, id string) (models.Aluno, error) {
 	aluno := models.Aluno{}
 	err := db.QueryRowContext(ctx, "select * from alunos where id = ?", id).Scan(
 		&aluno.Id,
@@ -41,7 +41,7 @@ func GetAlunoIDNameDB(ctx context.Context, db *sql.DB, id int) (models.Aluno, er
 }
 
 func PostAlunoDB(ctx context.Context, db *sql.DB, aluno *models.Aluno)error{
-	_, err := db.ExecContext(ctx, "insert into alunos (nome, media) values (?, ?)", aluno.Nome, aluno.Media)
+	_, err := db.ExecContext(ctx, "insert into alunos (nome, sobrenome, media) values (?, ?, ?)", aluno.Nome, aluno.Sobrenome, aluno.Media)
 	if err != nil{
 		return err
 	}
@@ -50,11 +50,9 @@ func PostAlunoDB(ctx context.Context, db *sql.DB, aluno *models.Aluno)error{
 }
 
 func PutAlunoDB(ctx context.Context, db *sql.DB, aluno *models.Aluno)error{
-	_, err := db.ExecContext(ctx, "update alunos set nome = ?, sobrenome = ?, media = ? where id = ?", &aluno.Nome, &aluno.Sobrenome, &aluno.Media, &aluno.Id)
+	_, err := db.ExecContext(ctx, "update alunos set nome = ?, sobrenome = ?, media = ? where id = ?", aluno.Nome, aluno.Sobrenome, aluno.Media, aluno.Id)
 	if err != nil{
 		return err
 	}
 	return nil
 }
-
-func DeleteAlunoDB(db *sql.DB, )

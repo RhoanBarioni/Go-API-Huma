@@ -32,19 +32,20 @@ func main() {
 	// 	Media: 4,
 	// }
 	// Create a new router & API
+	h := handlers.NewHandler(db)
 	router := chi.NewMux()                                            // pega as rotas
 	api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0")) // humachi.new vai unir junto com o chi para que funcione junto com o swagger
 
 	// Register GET /greeting/{name} handler.
 	// huma.Get(api, "/greeting/{name}", handlers.GreetingEndpoint)
 	// GET /alunos
-	huma.Get(api, "/alunos", handlers.GetAlunos)
+	huma.Get(api, "/alunos", h.GetAlunos)
 	// GET /aluno/{id}
-	huma.Get(api, "/aluno/{id}", handlers.GetAlunosId)
-	huma.Post(api, "/aluno", handlers.CreateAluno)
-	huma.Put(api, "/aluno/{id}", handlers.UpdateAluno)
+	huma.Get(api, "/aluno/{id}", h.GetAlunosId)
+	huma.Post(api, "/aluno", h.CreateAluno)
+	huma.Put(api, "/aluno/{id}", h.UpdateAluno)
 	// DELETE /aluno/{id}
-	huma.Delete(api, "/aluno/{id}", handlers.DeleteAlunoId)
+	// huma.Delete(api, "/aluno/{id}", handlers.DeleteAlunoId)
 
 	// Start the server!
 	http.ListenAndServe("127.0.0.1:8888", router)
