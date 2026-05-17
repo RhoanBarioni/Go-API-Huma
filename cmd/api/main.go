@@ -45,7 +45,7 @@ func main() {
 	huma.Post(api, "/aluno", h.CreateAluno)
 	huma.Put(api, "/aluno/{id}", h.UpdateAluno)
 	// DELETE /aluno/{id}
-	// huma.Delete(api, "/aluno/{id}", handlers.DeleteAlunoId)
+	huma.Delete(api, "/aluno/{id}", h.DeleteAlunoId)
 
 	// Start the server!
 	http.ListenAndServe("127.0.0.1:8888", router)

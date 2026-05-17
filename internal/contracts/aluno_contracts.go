@@ -60,7 +60,7 @@ type AlunoIdResponse struct {
 }
 
 type AlunoDeleteIdRequest struct {
-	Id string `path:"id" example:"5" doc:"Id do Aluno"`
+	Id string `query:"id" example:"5" doc:"Id do Aluno"`
 }
 
 type AlunoDeleteIdResponse struct {

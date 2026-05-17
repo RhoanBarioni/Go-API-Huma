@@ -32,23 +32,6 @@ func (h *Handler) GetAlunos(ctx context.Context, input *contracts.GetAlunosResqu
 	return res, nil
 }
 
-// func GetAlunosDB(db *sql.DB) func(context.Context, *contracts.GetAlunosRequest) (*contracts.GetAlunosResponse, error) {
-// 	return func(ctx context.Context, input *contracts.GetAlunosRequest) (*contracts.GetAlunosResponse, error) {
-// 		alunos, err := repository.GetAlunosDB(ctx, db)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		res := &contracts.GetAlunosResponse{}
-// 		res.Body.Alunos = alunos
-// 		if input.Nome != "" {
-// 			res.Body.Message = fmt.Sprintf("Resultado para a busca %s", input.Nome)
-// 		} else {
-// 			res.Body.Message = "Listagem completa de alunos"
-// 		}
-// 		return res, nil
-// 	}
-// }
-
 func (h *Handler) GetAlunosId(ctx context.Context, input *contracts.GetAlunosIdResquest) (*contracts.GetAlunosIdResponse, error) {
 	alunosDB, err := repository.GetAlunoIDNameDB(ctx, h.DB, input.Id)
 	if err != nil {
@@ -56,7 +39,7 @@ func (h *Handler) GetAlunosId(ctx context.Context, input *contracts.GetAlunosIdR
 	}
 	res := &contracts.GetAlunosIdResponse{}
 	res.Body.Nome = alunosDB.Nome
-	res.Body.Message = fmt.Sprintf("Olá, %s %s (ID: %d). Sua Média é: %0.2f", alunosDB.Nome, alunosDB.Sobrenome, alunosDB.Id, alunosDB.Media)
+	res.Body.Message = fmt.Sprintf("Olá, %s %s (ID: %v). Sua Média é: %0.2f", alunosDB.Nome, alunosDB.Sobrenome, alunosDB.Id, alunosDB.Media)
 	return res, nil
 }
 
@@ -103,14 +86,14 @@ func (h *Handler) UpdateAluno(ctx context.Context, input *contracts.AlunoIdReque
 	}
 
 	aluno := models.Aluno{
-		Id: input.Id,
+		Id:        input.Id,
 		Nome:      input.Body.Nome,
 		Sobrenome: input.Body.Sobrenome,
 		Media:     float64(res.Body.Media),
 	}
 
 	err := repository.PutAlunoDB(ctx, h.DB, &aluno)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
@@ -119,15 +102,20 @@ func (h *Handler) UpdateAluno(ctx context.Context, input *contracts.AlunoIdReque
 	return res, nil
 }
 
-func DeleteAlunoId(ctx context.Context, input *contracts.AlunoDeleteIdRequest) (*contracts.AlunoDeleteIdResponse, error) {
+func (h *Handler) DeleteAlunoId(ctx context.Context, input *contracts.AlunoDeleteIdRequest) (*contracts.AlunoDeleteIdResponse, error) {
 	res := &contracts.AlunoDeleteIdResponse{}
-	alunoId := "5"
-	if alunoId != input.Id {
-		res.Body.Message = "Aluno não encontrado ou não existe"
-		return res, nil
+	alunosDB, err := repository.GetAlunosDB(ctx, h.DB)
+	if err != nil {
+		return nil, err
 	}
 
-	// usar a funcao do go "delete" para deletar
+	for _, a := range alunosDB {
+		if input.Id == a.Id {
+			repository.DeleteAlunoId(ctx, h.DB, &a)
+		} else {
+			res.Body.Message = fmt.Sprintf("Aluno de ID: %v não encontrado", input.Id)
+		}
+	}
 
 	res.Body.Message = fmt.Sprintf("Aluno com o ID: %v foi deletado com sucesso", input.Id)
 

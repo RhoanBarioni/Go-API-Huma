@@ -40,18 +40,26 @@ func GetAlunoIDNameDB(ctx context.Context, db *sql.DB, id string) (models.Aluno,
 	return aluno, nil
 }
 
-func PostAlunoDB(ctx context.Context, db *sql.DB, aluno *models.Aluno)error{
+func PostAlunoDB(ctx context.Context, db *sql.DB, aluno *models.Aluno) error {
 	_, err := db.ExecContext(ctx, "insert into alunos (nome, sobrenome, media) values (?, ?, ?)", aluno.Nome, aluno.Sobrenome, aluno.Media)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func PutAlunoDB(ctx context.Context, db *sql.DB, aluno *models.Aluno)error{
+func PutAlunoDB(ctx context.Context, db *sql.DB, aluno *models.Aluno) error {
 	_, err := db.ExecContext(ctx, "update alunos set nome = ?, sobrenome = ?, media = ? where id = ?", aluno.Nome, aluno.Sobrenome, aluno.Media, aluno.Id)
-	if err != nil{
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteAlunoId(ctx context.Context, db *sql.DB, aluno *models.Aluno) error {
+	_, err := db.ExecContext(ctx, "DELETE from alunos where id = ?", aluno.Id)
+	if err != nil {
 		return err
 	}
 	return nil
